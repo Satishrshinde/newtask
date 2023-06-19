@@ -1,10 +1,26 @@
 import React from 'react'
 import { useState } from 'react';
+import {db} from '../firebase'
+import {collection, addDoc,} from 'firebase/firestore'
+
 const Form = () => {
     const [name, setName] = useState("");
     const [number, setNumber] = useState("");
-    function submitInfo() {
-        <form>
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+          await addDoc(collection(db, 'tasks'), {
+           name:name,
+           number:number,
+          })
+        } catch (err) {
+          alert(err)
+        }
+        setName("")
+        setNumber("")
+      }
+    return (
+        <form className='form' onSubmit={handleSubmit}>
         <div>
           <label>name</label>
           <input type="text" placeholder="enter name"
@@ -16,15 +32,15 @@ const Form = () => {
           <input type="text" placeholder="enter number" value={number}
             onChange={event => setNumber(event.target.value)} />
         </div>
-        <button onClick={submitInfo}>Submit</button>
+        <button type="submit">Submit</button>
         <div>
         </div>
     
       </form>
       
-    }
-  return (
-    <h2>Form</h2>
+    
+  
+    
   )
 }
 
