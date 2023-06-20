@@ -1,10 +1,11 @@
 import React from "react";
-import Form from "./component/Form";
+import Services from "./services";
+
 function App() {
   
   return (
   
-<Form/>  
+<Services/>
   
 
   

@@ -1,9 +1,10 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import {db} from '../firebase'
-import {collection, addDoc,} from 'firebase/firestore'
+import {collection, addDoc,query,orderBy, onSnapshot} from 'firebase/firestore'
+import Services from "../services"
 
-const Form = () => {
+const Form = ({data}) => {
     const [name, setName] = useState("");
     const [number, setNumber] = useState("");
     const handleSubmit = async (e) => {
@@ -18,7 +19,10 @@ const Form = () => {
         }
         setName("")
         setNumber("")
-      }
+        console.log("satish")
+        }
+
+      
     return (
         <form className='form' onSubmit={handleSubmit}>
         <div>
@@ -34,6 +38,11 @@ const Form = () => {
         </div>
         <button type="submit">Submit</button>
         <div>
+        <ul>
+      {/* {data.map((item) => (
+        <li key={item.id}>{item.name}</li>
+      ))} */}
+    </ul>
         </div>
     
       </form>
