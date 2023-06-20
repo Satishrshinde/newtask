@@ -1,8 +1,7 @@
 import React from 'react'
 import { useState,useEffect } from 'react';
 import {db} from '../firebase'
-import {collection, addDoc,query,orderBy, onSnapshot} from 'firebase/firestore'
-import Services from "../services"
+import {collection, addDoc,query,} from 'firebase/firestore'
 
 const Form = ({data}) => {
     const [name, setName] = useState("");
@@ -19,8 +18,8 @@ const Form = ({data}) => {
         }
         setName("")
         setNumber("")
-        console.log("satish")
-        }
+        console.log(data)
+        } 
 
       
     return (
@@ -39,9 +38,9 @@ const Form = ({data}) => {
         <button type="submit">Submit</button>
         <div>
         <ul>
-      {/* {data.map((item) => (
-        <li key={item.id}>{item.name}</li>
-      ))} */}
+       {data.map((item) => (
+        <li> {item.name}{item.number}</li>
+      ))} 
     </ul>
         </div>
     
