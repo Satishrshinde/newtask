@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 import React from 'react'
-import { useState,useEffect } from 'react';
+import { useState} from 'react';
 import {db} from '../firebase'
-import {collection, addDoc,query,} from 'firebase/firestore'
+import {collection, addDoc} from 'firebase/firestore'
 import { Table } from 'react-bootstrap';
 
 const Form = ({data}) => {
@@ -68,6 +67,5 @@ const Form = ({data}) => {
     
   )
 }
-=======
->>>>>>> e0b52e59fb7d216794f09f9f08decb4542b5fa65
+export default Form;
 
