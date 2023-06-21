@@ -17,7 +17,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const Services = () => {
-  const [data, setData] = useState([]);
+  const[newData,setNewData]=useState([])
  
   useEffect(() => {
     const fetchData = async () => {
@@ -25,14 +25,14 @@ const Services = () => {
       const collectionRef = db.collection('tasks');
       const snapshot = await collectionRef.get();
       const retrievedData = snapshot.docs.map((doc) => doc.data());
-      setData(retrievedData);
+      setNewData(retrievedData);
     };
     fetchData();
   }, []);
-     console.log(data); 
+     console.log(newData); 
   return (
     <div>
-      <Form data={data} />
+      <Form newData={newData} />
     </div>
   );
 };
