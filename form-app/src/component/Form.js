@@ -74,7 +74,7 @@ const Form = ({ newData }) => {
         <Table className="container w-75" bordered striped variant="dark">
           <thead>
             <tr>
-              <th>firstName</th>
+              <th>first Name</th>
               <th>Last Name</th>
             </tr>
           </thead>
