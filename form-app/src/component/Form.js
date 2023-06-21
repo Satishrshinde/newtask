@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react'
 import { useState,useEffect } from 'react';
 import {db} from '../firebase'
@@ -67,5 +68,6 @@ const Form = ({data}) => {
     
   )
 }
+=======
+>>>>>>> e0b52e59fb7d216794f09f9f08decb4542b5fa65
 
-export default Form
