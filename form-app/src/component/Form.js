@@ -2,72 +2,113 @@ import React from "react";
 import { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
-import "./Form.css"
+import "./Form.css";
 import { Table } from "react-bootstrap";
 
-const Form = ({ newData ,fetchData}) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [firstNameErr, setFirstNameErr] = useState(false);
-  const [lastNameErr, setLastNameErr] = useState(false);
+const Form = ({ newData, fetchData }) => {
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [fullNameErr, setFullNameErr] = useState(false);
+  const [emailErr, setEmailErr] = useState(false);
+  const [mobileNumberErr, setMobileNumberErr] = useState(false);
+
+  function validateEmail(email) {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (firstName === "") {
-      setFirstNameErr(true);
+    if (fullName === "") {
+      setFullNameErr(true);
     } else {
-      setFirstNameErr(false);
+      setFullNameErr(false);
     }
-    if (lastName === "") {
-      setLastNameErr(true);
+    if (email === "") {
+      setEmailErr(true);
     } else {
-      setLastNameErr(false);
+      setEmailErr(false);
     }
-    if (firstName !== "" && lastName !== "") {
+    if (mobileNumber === "" || mobileNumber.length < 10) {
+      setMobileNumberErr(true);
+    } else {
+      setMobileNumberErr(false);
+    }
+    const isValidEmail = validateEmail(email);
+    if (!isValidEmail) {
+      setEmailErr(true);
+    } else {
+      setEmailErr(false);
+    }
+    if (
+      fullName !== "" &&
+      email !== "" &&
+      isValidEmail &&
+      mobileNumber !== "" &&
+      mobileNumber.length === 10
+    ) {
       try {
         await addDoc(collection(db, "tasks"), {
-          firstName: firstName,
-          lastName: lastName,
+          fullName: fullName,
+          email: email,
+          mobileNumber:mobileNumber
         });
       } catch (err) {
-        console.log("Netwok Error")
+        console.log("Netwok Error");
       }
-      fetchData()
-      setFirstName("")
-      setLastName("")
-
+      fetchData();
+      setFullName("");
+      setEmail("");
+      setMobileNumber("");
     }
   };
   return (
     <form className="formContainer mt-5" onSubmit={handleSubmit}>
       <div className="mt-10 mb-4 form">
         <div className="form-group row">
-        <label className="col-sm-3 col-form-label">First Name</label>
+          <label className="col-sm-3 col-form-label">Full Name</label>
           <div className="col-sm-9">
-          <input  
-            type="text"
-            className="form-control "
-            placeholder="Enter first name"
-            value={firstName}
-            onChange={(event) => setFirstName(event.target.value)}
-          />
+            <input
+              type="text"
+              className="form-control "
+              placeholder="Enter first name"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+            />
           </div>
-          {firstNameErr && (
-            <span className="text-danger">first name should not be empty</span>
+          {fullNameErr && (
+            <span className="text-danger">Name should not be empty</span>
           )}
         </div>
         <div className="form-group row">
-        <label className="col-sm-3 col-form-label">Last Name</label>
-        <div className="col-sm-9">
-          <input
-            type="text"
-            placeholder="Enter last name"
-            className="form-control"
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
-          />
+          <label className="col-sm-3 col-form-label">Email</label>
+          <div className="col-sm-9">
+            <input
+              type="text"
+              placeholder="Enter Email"
+              className="form-control"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
           </div>
-          {lastNameErr && (
-            <span className="text-danger">Last name should not be empty</span>
+          {emailErr && (
+            <span className="text-danger">Email should be valid</span>
+          )}
+        </div>
+        <div className="form-group row">
+          <label className="col-sm-3 col-form-label">Mobile Number</label>
+          <div className="col-sm-9">
+            <input
+              type="text"
+              className="form-control "
+              placeholder="Mobile Number"
+              value={mobileNumber}
+              onChange={(event) => setMobileNumber(event.target.value)}
+            />
+          </div>
+          {mobileNumberErr && (
+            <span className="text-danger">Number should be 10 digits</span>
           )}
         </div>
         <div className="d-flex justify-content-center">
@@ -80,16 +121,17 @@ const Form = ({ newData ,fetchData}) => {
         <Table className="table table-bordered container w-75" bordered striped>
           <thead>
             <tr>
-              <th>First Name</th>
-              <th>first Name</th>
-              <th>Last Name</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Mobile Number</th>
             </tr>
           </thead>
           <tbody>
-            {newData.map((item,pos) => (
+            {newData.map((item, pos) => (
               <tr className="hello" key={pos}>
-                <td> {item.firstName}</td>
-                <td>{item.lastName}</td>
+                <td> {item.fullName}</td>
+                <td>{item.email}</td>
+                <td>{item.mobileNumber}</td>
               </tr>
             ))}
           </tbody>
