@@ -80,11 +80,8 @@ const Form = ({ newData ,fetchData}) => {
         <Table className="table table-bordered container w-75" bordered striped>
           <thead>
             <tr>
-<<<<<<< HEAD
               <th>First Name</th>
-=======
               <th>first Name</th>
->>>>>>> main
               <th>Last Name</th>
             </tr>
           </thead>
