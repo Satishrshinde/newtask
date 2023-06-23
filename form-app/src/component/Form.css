@@ -2,6 +2,8 @@
     margin: auto;
     max-width: 900px;
 }
+.form{
+    margin-left: 115px;}
 input.contact {
     display: block;
     width: 100%;

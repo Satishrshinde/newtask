@@ -31,7 +31,6 @@ const Services = () => {
   useEffect(() => {
   fetchData();
 }, [])
-     console.log(newData); 
   return (
     <div>
       <Form newData={newData}

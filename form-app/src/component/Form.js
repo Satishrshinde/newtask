@@ -38,15 +38,15 @@ const Form = ({ newData ,fetchData}) => {
     }
   };
   return (
-    <form className="formContainer" onSubmit={handleSubmit}>
-      <div className="mt-10 mb-5 ">
+    <form className="formContainer mt-5" onSubmit={handleSubmit}>
+      <div className="mt-10 mb-4 form">
         <div className="form-group row">
         <label className="col-sm-3 col-form-label">First Name</label>
           <div className="col-sm-9">
           <input  
             type="text"
-            className="form-control"
-            placeholder="enter first name"
+            className="form-control "
+            placeholder="Enter first name"
             value={firstName}
             onChange={(event) => setFirstName(event.target.value)}
           />
@@ -60,7 +60,7 @@ const Form = ({ newData ,fetchData}) => {
         <div className="col-sm-9">
           <input
             type="text"
-            placeholder="enter last name"
+            placeholder="Enter last name"
             className="form-control"
             value={lastName}
             onChange={(event) => setLastName(event.target.value)}
@@ -71,7 +71,7 @@ const Form = ({ newData ,fetchData}) => {
           )}
         </div>
         <div className="d-flex justify-content-center">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary mt-4">
             Submit
           </button>
         </div>
@@ -80,13 +80,13 @@ const Form = ({ newData ,fetchData}) => {
         <Table className="table table-bordered container w-75" bordered striped>
           <thead>
             <tr>
-              <th>firstName</th>
+              <th>First Name</th>
               <th>Last Name</th>
             </tr>
           </thead>
           <tbody>
-            {newData.map((item) => (
-              <tr>
+            {newData.map((item,pos) => (
+              <tr className="hello" key={pos}>
                 <td> {item.firstName}</td>
                 <td>{item.lastName}</td>
               </tr>
