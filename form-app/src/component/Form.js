@@ -2,14 +2,16 @@ import React from "react";
 import { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import "./Form.css"
 import { Table } from "react-bootstrap";
 
-const Form = ({ newData }) => {
+const Form = ({ newData ,fetchData}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [firstNameErr, setFirstNameErr] = useState(false);
   const [lastNameErr, setLastNameErr] = useState(false);
   const handleSubmit = async (e) => {
+    e.preventDefault();
     if (firstName === "") {
       setFirstNameErr(true);
     } else {
@@ -21,66 +23,74 @@ const Form = ({ newData }) => {
       setLastNameErr(false);
     }
     if (firstName !== "" && lastName !== "") {
-      e.preventDefault();
       try {
         await addDoc(collection(db, "tasks"), {
           firstName: firstName,
           lastName: lastName,
         });
       } catch (err) {
-        alert(err);
+        console.log("Netwok Error")
       }
+      fetchData()
+      setFirstName("")
+      setLastName("")
 
     }
-    // setFirstName("");
-    // setLastName("");
   };
   return (
-    <form className="form Container mx-auto w-50" onSubmit={handleSubmit}>
-      <div className="mt-5 mb-5  ">
-        <div className="form-outline">
-          <input
+    <form className="formContainer mt-5" onSubmit={handleSubmit}>
+      <div className="mt-10 mb-4 form">
+        <div className="form-group row">
+        <label className="col-sm-3 col-form-label">First Name</label>
+          <div className="col-sm-9">
+          <input  
             type="text"
-            className="form-control"
-            placeholder="enter first name"
+            className="form-control "
+            placeholder="Enter first name"
             value={firstName}
             onChange={(event) => setFirstName(event.target.value)}
           />
+          </div>
           {firstNameErr && (
             <span className="text-danger">first name should not be empty</span>
           )}
-          <label className="form-label"></label>
         </div>
-        <div className="form-outline">
+        <div className="form-group row">
+        <label className="col-sm-3 col-form-label">Last Name</label>
+        <div className="col-sm-9">
           <input
             type="text"
-            placeholder="enter last name"
+            placeholder="Enter last name"
             className="form-control"
             value={lastName}
             onChange={(event) => setLastName(event.target.value)}
-          />{" "}
+          />
+          </div>
           {lastNameErr && (
             <span className="text-danger">Last name should not be empty</span>
           )}
-          <label className="form-label"></label>
         </div>
         <div className="d-flex justify-content-center">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary mt-4">
             Submit
           </button>
         </div>
       </div>
       <div>
-        <Table className="container w-75" bordered striped variant="dark">
+        <Table className="table table-bordered container w-75" bordered striped>
           <thead>
             <tr>
-              <th>firstName</th>
+<<<<<<< HEAD
+              <th>First Name</th>
+=======
+              <th>first Name</th>
+>>>>>>> main
               <th>Last Name</th>
             </tr>
           </thead>
           <tbody>
-            {newData.map((item) => (
-              <tr>
+            {newData.map((item,pos) => (
+              <tr className="hello" key={pos}>
                 <td> {item.firstName}</td>
                 <td>{item.lastName}</td>
               </tr>

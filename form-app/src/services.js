@@ -19,7 +19,7 @@ firebase.initializeApp(firebaseConfig);
 const Services = () => {
   const[newData,setNewData]=useState([])
  
-  useEffect(() => {
+  
     const fetchData = async () => {
       const db = firebase.firestore();
       const collectionRef = db.collection('tasks');
@@ -27,12 +27,14 @@ const Services = () => {
       const retrievedData = snapshot.docs.map((doc) => doc.data());
       setNewData(retrievedData);
     };
-    fetchData();
-  }, []);
-     console.log(newData); 
+  ;
+  useEffect(() => {
+  fetchData();
+}, [])
   return (
     <div>
-      <Form newData={newData} />
+      <Form newData={newData}
+      fetchData={fetchData} />
     </div>
   );
 };
