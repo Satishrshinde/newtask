@@ -2,10 +2,12 @@ import React from "react";
 import { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import _ from "lodash";
 import "./Form.css";
 import { Table } from "react-bootstrap";
 
-const Form = ({ newData, fetchData }) => {
+const Form = ({ data,fetchData }) => {
+  const[newData,setNewData]=useState([])
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -13,10 +15,12 @@ const Form = ({ newData, fetchData }) => {
   const [emailErr, setEmailErr] = useState(false);
   const [mobileNumberErr, setMobileNumberErr] = useState(false);
 
+
   function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   }
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,6 +67,19 @@ const Form = ({ newData, fetchData }) => {
       setMobileNumber("");
     }
   };
+console.log(newData)
+
+  function getData(filterValue) {
+    if (filterValue !== "") {
+      const result = data.filter(function (items) {
+        return items.fullName.includes(filterValue);
+      }); 
+      setNewData(result);
+    } else {
+      setNewData(data);
+    }
+  }
+
   return (
     <form className="formContainer mt-5" onSubmit={handleSubmit}>
       <div className="mt-10 mb-4 form">
@@ -118,6 +135,14 @@ const Form = ({ newData, fetchData }) => {
         </div>
       </div>
       <div>
+        <div> 
+         <input
+              type="text"
+              className="form-control"
+              placeholder="search products"
+              onChange={event => getData(event.target.value)}
+            />
+        </div>
         <Table className="table table-bordered container w-75" bordered striped>
           <thead>
             <tr>
