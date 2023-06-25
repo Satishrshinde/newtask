@@ -1,4 +1,4 @@
-import React ,{ useState } from "react";
+import React, { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import _ from "lodash";
@@ -10,11 +10,9 @@ const Form = ({ data, fetchData }) => {
   const [fullNameErr, setFullNameErr] = useState(false);
   const [emailErr, setEmailErr] = useState(false);
   const [mobileNumberErr, setMobileNumberErr] = useState(false);
-  const [searchValue,setSearchValue]=useState("")
+  const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-  
-
 
   function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
@@ -55,7 +53,7 @@ const Form = ({ data, fetchData }) => {
         await addDoc(collection(db, "tasks"), {
           fullName: fullName,
           email: email,
-          mobileNumber: mobileNumber,   
+          mobileNumber: mobileNumber,
         });
       } catch (err) {
         console.log("Netwok Error");
@@ -66,13 +64,11 @@ const Form = ({ data, fetchData }) => {
       setMobileNumber("");
     }
   };
-  console.log(data);
   const handleViewChange = (e) => {
     setItemsPerPage(parseInt(e.target.value));
   };
 
   const sortedData = _.orderBy(data, "fullName");
-  const slicedData = sortedData.slice(0, itemsPerPage);
 
   const pageNumbers = Math.ceil(sortedData.length / itemsPerPage);
   const pagination = [];
@@ -165,7 +161,7 @@ const Form = ({ data, fetchData }) => {
 
       <div>
         <div className="flex items-center mb-4">
-        <div className="flex space-x-2 items-center">
+          <div className="flex space-x-2 items-center">
             <p>Show</p>
             <select
               value={itemsPerPage}
@@ -189,22 +185,29 @@ const Form = ({ data, fetchData }) => {
             />
           </div>
         </div>
-        <table className="table-auto w-3/4 mx-auto my-4 ml-0">
+        <table className="table-auto">
           <thead>
             <tr>
-              <th className="px-1 py-2 text-left">Full Name</th>
+              <th className="px-4 py-2 text-left">Full Name</th>
               <th className="px-4 py-2">Email</th>
               <th className="px-4 py-2">Mobile Number</th>
             </tr>
           </thead>
           <tbody>
-            {slicedData.filter(item=>item.fullName.toLowerCase().includes(searchValue.toLocaleLowerCase())).map((item, pos) => (
-              <tr className="hello" key={pos}>
-                <td className="border px-4 py-2">{item.fullName}</td>
-                <td className="border px-4 py-2">{item.email}</td>
-                <td className="border px-4 py-2">{item.mobileNumber}</td>
-              </tr>
-            ))}
+            {sortedData
+              .filter((item) =>
+                item.fullName
+                  .toLowerCase()
+                  .includes(searchValue.toLocaleLowerCase())
+              )
+              .slice(0, itemsPerPage)
+              .map((item, pos) => (
+                <tr className="hello" key={pos}>
+                  <td className="border px-4 py-2">{item.fullName}</td>
+                  <td className="border px-4 py-2">{item.email}</td>
+                  <td className="border px-4 py-2">{item.mobileNumber}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
         <div className="flex justify-center mt-4">
@@ -212,7 +215,9 @@ const Form = ({ data, fetchData }) => {
             <button
               key={number}
               className={`mx-1 px-3 py-1 rounded ${
-                number === currentPage ? "bg-blue-500 text-white" : "bg-gray-200"
+                number === currentPage
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200"
               }`}
               onClick={() => setCurrentPage(number)}
             >
