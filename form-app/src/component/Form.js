@@ -55,7 +55,7 @@ const Form = ({ data, fetchData }) => {
         await addDoc(collection(db, "tasks"), {
           fullName: fullName,
           email: email,
-          mobileNumber: mobileNumber,
+          mobileNumber: mobileNumber,   
         });
       } catch (err) {
         console.log("Netwok Error");
@@ -79,7 +79,6 @@ const Form = ({ data, fetchData }) => {
   for (let i = 1; i <= pageNumbers; i++) {
     pagination.push(i);
   }
-
   return (
     <div className="container mx-auto px-4 w-2/4">
       <form className="formContainer mx-auto mt-5" onSubmit={handleSubmit}>
