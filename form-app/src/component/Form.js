@@ -5,13 +5,13 @@ import { collection, addDoc } from "firebase/firestore";
 import _ from "lodash";
 
 const Form = ({ data, fetchData }) => {
-  const [newData, setNewData] = useState([]);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [fullNameErr, setFullNameErr] = useState(false);
   const [emailErr, setEmailErr] = useState(false);
   const [mobileNumberErr, setMobileNumberErr] = useState(false);
+  const [searchValue,setSearchValue]=useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   
@@ -67,23 +67,12 @@ const Form = ({ data, fetchData }) => {
       setMobileNumber("");
     }
   };
-  console.log(newData);
-
-  function getData(filterValue) {
-    if (filterValue !== "") {
-      const result = data.filter(function (items) {
-        return items.fullName.includes(filterValue);
-      });
-      setNewData(result);
-    } else {
-      setNewData(data);
-    }
-  }
+  console.log(data);
   const handleViewChange = (e) => {
     setItemsPerPage(parseInt(e.target.value));
   };
 
-  const sortedData = _.orderBy(newData, "fullName");
+  const sortedData = _.orderBy(data, "fullName");
   const slicedData = sortedData.slice(0, itemsPerPage);
 
   const pageNumbers = Math.ceil(sortedData.length / itemsPerPage);
@@ -199,7 +188,7 @@ const Form = ({ data, fetchData }) => {
               type="text"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="Search products"
-              onChange={(event) => getData(event.target.value)}
+              onChange={(event) => setSearchValue(event.target.value)}
             />
           </div>
         </div>
@@ -212,7 +201,7 @@ const Form = ({ data, fetchData }) => {
             </tr>
           </thead>
           <tbody>
-            {slicedData.map((item, pos) => (
+            {slicedData.filter(item=>item.fullName.includes(searchValue)).map((item, pos) => (
               <tr className="hello" key={pos}>
                 <td className="border px-4 py-2">{item.fullName}</td>
                 <td className="border px-4 py-2">{item.email}</td>
