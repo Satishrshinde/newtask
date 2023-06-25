@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React ,{ useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import _ from "lodash";
@@ -80,7 +79,6 @@ const Form = ({ data, fetchData }) => {
   for (let i = 1; i <= pageNumbers; i++) {
     pagination.push(i);
   }
-  const showOptions = [5, 10, 15, 20];
 
   return (
     <div className="container mx-auto px-4 w-2/4">
@@ -201,7 +199,7 @@ const Form = ({ data, fetchData }) => {
             </tr>
           </thead>
           <tbody>
-            {slicedData.filter(item=>item.fullName.includes(searchValue)).map((item, pos) => (
+            {slicedData.filter(item=>item.fullName.toLowerCase().includes(searchValue.toLocaleLowerCase())).map((item, pos) => (
               <tr className="hello" key={pos}>
                 <td className="border px-4 py-2">{item.fullName}</td>
                 <td className="border px-4 py-2">{item.email}</td>
