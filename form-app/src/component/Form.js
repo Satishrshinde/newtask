@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { db } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import _ from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSortAmountUp, faSortAmountDown } from "@fortawesome/free-solid-svg-icons";
 
 const Form = ({ data, fetchData }) => {
   const [fullName, setFullName] = useState("");
@@ -13,6 +15,8 @@ const Form = ({ data, fetchData }) => {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [sortColumn, setSortColumn] = useState("fullName");
+  const [sortDirection, setSortDirection] = useState("asc");
 
   function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
@@ -56,7 +60,7 @@ const Form = ({ data, fetchData }) => {
           mobileNumber: mobileNumber,
         });
       } catch (err) {
-        console.log("Netwok Error");
+        console.log("Network Error");
       }
       fetchData();
       setFullName("");
@@ -64,17 +68,32 @@ const Form = ({ data, fetchData }) => {
       setMobileNumber("");
     }
   };
+
   const handleViewChange = (e) => {
     setItemsPerPage(parseInt(e.target.value));
   };
 
-  const sortedData = _.orderBy(data, "fullName");
+  const handleSort = (column) => {
+    if (column === sortColumn) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+
+  const sortedData = _.orderBy(data, sortColumn, sortDirection);
 
   const pageNumbers = Math.ceil(sortedData.length / itemsPerPage);
   const pagination = [];
   for (let i = 1; i <= pageNumbers; i++) {
     pagination.push(i);
   }
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div className="container mx-auto px-4 w-2/4">
       <form className="formContainer mx-auto mt-5" onSubmit={handleSubmit}>
@@ -188,19 +207,61 @@ const Form = ({ data, fetchData }) => {
         <table className="table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2 text-left">Full Name</th>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Mobile Number</th>
+              <th
+                className="px-4 py-2 text-left cursor-pointer"
+                onClick={() => handleSort("fullName")}
+              >
+                Full Name
+                {sortColumn === "fullName" && (
+                  <FontAwesomeIcon
+                    icon={
+                      sortDirection === "asc"
+                        ? faSortAmountUp
+                        : faSortAmountDown
+                    }
+                    className="ml-2"
+                  />
+                )}
+              </th>
+              <th
+                className="px-4 py-2 cursor-pointer"
+                onClick={() => handleSort("email")}
+              >
+                Email
+                {sortColumn === "email" && (
+                  <FontAwesomeIcon
+                    icon={
+                      sortDirection === "asc"
+                        ? faSortAmountUp
+                        : faSortAmountDown
+                    }
+                    className="ml-2"
+                  />
+                )}
+              </th>
+              <th
+                className="px-4 py-2 cursor-pointer"
+                onClick={() => handleSort("mobileNumber")}
+              >
+                Mobile Number
+                {sortColumn === "mobileNumber" && (
+                  <FontAwesomeIcon
+                    icon={
+                      sortDirection === "asc"
+                        ? faSortAmountUp
+                        : faSortAmountDown
+                    }
+                    className="ml-2"
+                  />
+                )}
+              </th>
             </tr>
           </thead>
           <tbody>
-            {sortedData
+            {currentItems
               .filter((item) =>
-                item.fullName
-                  .toLowerCase()
-                  .includes(searchValue.toLocaleLowerCase())
+                item.fullName.toLowerCase().includes(searchValue.toLowerCase())
               )
-              .slice(0, itemsPerPage)
               .map((item, pos) => (
                 <tr className="hello" key={pos}>
                   <td className="border px-4 py-2">{item.fullName}</td>
@@ -215,9 +276,7 @@ const Form = ({ data, fetchData }) => {
             <button
               key={number}
               className={`mx-1 px-3 py-1 rounded ${
-                number === currentPage
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200"
+                number === currentPage ? "bg-blue-500 text-white" : "bg-gray-200"
               }`}
               onClick={() => setCurrentPage(number)}
             >
