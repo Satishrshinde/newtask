@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import Form from "./component/Form";
+// import Form from "./component/Form";
+import Table from "./component/Form";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyA1TuDOIMeHQtSWVbPMHfJBIusFpKyA9Xo",
@@ -31,7 +33,7 @@ const Services = () => {
   }, []);
   return (
     <div>
-      <Form data={data} fetchData={fetchData} />
+      <Table data={data} fetchData={fetchData} />
     </div>
   );
 };

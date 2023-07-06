@@ -1,288 +1,113 @@
-import React, { useState } from "react";
-import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
-import _ from "lodash";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSortAmountUp, faSortAmountDown } from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+import "./form.css"
 
-const Form = ({ data, fetchData }) => {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [fullNameErr, setFullNameErr] = useState(false);
-  const [emailErr, setEmailErr] = useState(false);
-  const [mobileNumberErr, setMobileNumberErr] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-  const [sortColumn, setSortColumn] = useState("fullName");
-  const [sortDirection, setSortDirection] = useState("asc");
-
-  function validateEmail(email) {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (fullName === "") {
-      setFullNameErr(true);
-    } else {
-      setFullNameErr(false);
-    }
-    if (email === "") {
-      setEmailErr(true);
-    } else {
-      setEmailErr(false);
-    }
-    if (mobileNumber === "" || mobileNumber.length < 10) {
-      setMobileNumberErr(true);
-    } else {
-      setMobileNumberErr(false);
-    }
-    const isValidEmail = validateEmail(email);
-    if (!isValidEmail) {
-      setEmailErr(true);
-    } else {
-      setEmailErr(false);
-    }
-    if (
-      fullName !== "" &&
-      email !== "" &&
-      isValidEmail &&
-      mobileNumber !== "" &&
-      mobileNumber.length === 10
-    ) {
-      try {
-        await addDoc(collection(db, "tasks"), {
-          fullName: fullName,
-          email: email,
-          mobileNumber: mobileNumber,
-        });
-      } catch (err) {
-        console.log("Network Error");
-      }
-      fetchData();
-      setFullName("");
-      setEmail("");
-      setMobileNumber("");
-    }
-  };
-
-  const handleViewChange = (e) => {
-    setItemsPerPage(parseInt(e.target.value));
-  };
-
-  const handleSort = (column) => {
-    if (column === sortColumn) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(column);
-      setSortDirection("asc");
-    }
-  };
-
-  const sortedData = _.orderBy(data, sortColumn, sortDirection);
-
-  const pageNumbers = Math.ceil(sortedData.length / itemsPerPage);
-  const pagination = [];
-  for (let i = 1; i <= pageNumbers; i++) {
-    pagination.push(i);
-  }
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
+const Form = () => {
 
   return (
-    <div className="container mx-auto px-4 w-2/4">
-      <form className="formContainer mx-auto mt-5" onSubmit={handleSubmit}>
-        <div className="mt-10 mb-4">
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="fullName"
-            >
-              Full Name
-            </label>
+    <div className="body flex justify-center">
+      <div className="tableContainer bg-white shadow-md lg:w-2/4 mt-10">
+        <div>
+          <div className="flex justify-center">
             <input
               type="text"
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                fullNameErr && "border-red-500"
-              }`}
-              id="fullName"
-              placeholder="Enter first name"
-              value={fullName}
-              onChange={(event) => setFullName(event.target.value)}
-            />
-            {fullNameErr && (
-              <span className="text-red-500 text-xs">
-                Name should not be empty
-              </span>
-            )}
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              type="text"
-              placeholder="Enter Email"
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                emailErr && "border-red-500"
-              }`}
-              id="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-            {emailErr && (
-              <span className="text-red-500 text-xs">
-                Email should be valid
-              </span>
-            )}
-          </div>
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="mobileNumber"
-            >
-              Mobile Number
-            </label>
-            <input
-              type="number"
-              className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                mobileNumberErr && "border-red-500"
-              }`}
-              id="mobileNumber"
-              placeholder="Mobile Number"
-              value={mobileNumber}
-              onChange={(event) => setMobileNumber(event.target.value)}
-            />
-            {mobileNumberErr && (
-              <span className="text-red-500 text-xs">
-                Number should be 10 digits
-              </span>
-            )}
-          </div>
-          <div className="flex items-center justify-center">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </form>
-
-      <div>
-        <div className="flex items-center mb-4">
-          <div className="flex space-x-2 items-center">
-            <p>Show</p>
-            <select
-              value={itemsPerPage}
-              onChange={handleViewChange}
-              className="border rounded py-1 px-2"
-            >
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="25">25</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-          </div>
-
-          <div className="ml-10">
-            <input
-              type="text"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Search products"
-              onChange={(event) => setSearchValue(event.target.value)}
+              className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline my-7"
+              placeholder="Search Name"
             />
           </div>
-        </div>
-        <table className="table-auto">
-          <thead>
-            <tr>
-              <th
-                className="px-4 py-2 text-left cursor-pointer"
-                onClick={() => handleSort("fullName")}
-              >
-                Full Name
-                {sortColumn === "fullName" && (
-                  <FontAwesomeIcon
-                    icon={
-                      sortDirection === "asc"
-                        ? faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    className="ml-2"
-                  />
-                )}
-              </th>
-              <th
-                className="px-4 py-2 cursor-pointer"
-                onClick={() => handleSort("email")}
-              >
-                Email
-                {sortColumn === "email" && (
-                  <FontAwesomeIcon
-                    icon={
-                      sortDirection === "asc"
-                        ? faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    className="ml-2"
-                  />
-                )}
-              </th>
-              <th
-                className="px-4 py-2 cursor-pointer"
-                onClick={() => handleSort("mobileNumber")}
-              >
-                Mobile Number
-                {sortColumn === "mobileNumber" && (
-                  <FontAwesomeIcon
-                    icon={
-                      sortDirection === "asc"
-                        ? faSortAmountUp
-                        : faSortAmountDown
-                    }
-                    className="ml-2"
-                  />
-                )}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems
-              .filter((item) =>
-                item.fullName.toLowerCase().includes(searchValue.toLowerCase())
-              )
-              .map((item, pos) => (
-                <tr className="hello" key={pos}>
-                  <td className="border px-4 py-2">{item.fullName}</td>
-                  <td className="border px-4 py-2">{item.email}</td>
-                  <td className="border px-4 py-2">{item.mobileNumber}</td>
+          <div className="flex justify-center">
+            <table className="mb-5">
+              <thead className="border-b-2">
+                <tr>
+                  <th className="px-4 py-3">
+                    Full Name
+                  </th>
+                  <th className="px-4 py-3">
+                    Job
+                  </th>
+                  <th
+                    className="px-4 py-3"
+                  >
+                    Email
+                  </th>
+                  <th className="px-4 py-3">
+                    Mobile Number
+                  </th>
+                  <th className="px-4 py-3">
+                    Age
+                  </th>
                 </tr>
-              ))}
-          </tbody>
-        </table>
-        <div className="flex justify-center mt-4">
-          {pagination.map((number) => (
-            <button
-              key={number}
-              className={`mx-1 px-3 py-1 rounded ${
-                number === currentPage ? "bg-blue-500 text-white" : "bg-gray-200"
-              }`}
-              onClick={() => setCurrentPage(number)}
-            >
-              {number}
-            </button>
-          ))}
+              </thead>
+              <tbody>
+
+                <tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr><tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr><tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr><tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr><tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr><tr>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Satish Shinde</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">Web Developer</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">satishrshinde2014@gmail.com</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">7507695758</td>
+                  <td className="px-4 py-3 text-gray-900 text-xs">24</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="flex justify-center mb-5">
+            <div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">&lt;</span>
+            </div>
+            <div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">1</span>
+            </div>
+            <div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">2</span>
+            </div><div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">3</span>
+            </div><div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">4</span>
+            </div><div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">5</span>
+            </div><div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">6</span>
+            </div>
+            <div className="border px-2 cursor-pointer bg-gray-25">
+              <span className="text-gray-700">&gt;</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
