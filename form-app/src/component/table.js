@@ -14,9 +14,9 @@ const Table = ({ data, fetchData }) => {
   const [mobileNumberErr, setMobileNumberErr] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  // const [itemsPerPage, setItemsPerPage] = useState(5);
-  // const [sortColumn, setSortColumn] = useState("fullName");
-  // const [sortDirection, setSortDirection] = useState("asc");
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [sortColumn, setSortColumn] = useState("fullName");
+  const [sortDirection, setSortDirection] = useState("asc");
 
   function validateEmail(email) {
     const re = /\S+@\S+\.\S+/;
@@ -69,26 +69,26 @@ const Table = ({ data, fetchData }) => {
     }
   };
 
-  // const handleViewChange = (e) => {
-  //   setItemsPerPage(parseInt(e.target.value));
-  // };
-  // const handleSort = (column) => {
-  //   if (column === sortColumn) {
-  //     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-  //   } else {
-  //     setSortColumn(column);
-  //     setSortDirection("asc");
-  //   }
-  // };
-  // const sortedData = _.orderBy(data, sortColumn, sortDirection);
-  // const pageNumbers = Math.ceil(sortedData.length / itemsPerPage);
-  // const pagination = [];
-  // for (let i = 1; i <= pageNumbers; i++) {
-  //   pagination.push(i);
-  // }
-  // const indexOfLastItem = currentPage * itemsPerPage;
-  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  // const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
+  const handleViewChange = (e) => {
+    setItemsPerPage(parseInt(e.target.value));
+  };
+  const handleSort = (column) => {
+    if (column === sortColumn) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+  const sortedData = _.orderBy(data, sortColumn, sortDirection);
+  const pageNumbers = Math.ceil(sortedData.length / itemsPerPage);
+  const pagination = [];
+  for (let i = 1; i <= pageNumbers; i++) {
+    pagination.push(i);
+  }
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="container mx-auto px-4 w-2/4">
@@ -173,7 +173,7 @@ const Table = ({ data, fetchData }) => {
 
       <div>
         <div className="flex items-center mb-4">
-          {/* <div className="flex space-x-2 items-center">
+          <div className="flex space-x-2 items-center">
             <p>Show</p>
             <select
               value={itemsPerPage}
@@ -186,7 +186,7 @@ const Table = ({ data, fetchData }) => {
               <option value="50">50</option>
               <option value="100">100</option>
             </select>
-          </div> */}
+          </div>
 
           <div className="ml-10">
             <input
@@ -202,10 +202,10 @@ const Table = ({ data, fetchData }) => {
             <tr>
               <th
                 className="px-4 py-2 text-left cursor-pointer"
-              // onClick={() => handleSort("fullName")}
+                onClick={() => handleSort("fullName")}
               >
                 Full Name
-                {/* {sortColumn === "fullName" && (
+                {sortColumn === "fullName" && (
                   <FontAwesomeIcon
                     icon={
                       sortDirection === "asc"
@@ -214,7 +214,7 @@ const Table = ({ data, fetchData }) => {
                     }
                     className="ml-2"
                   />
-                )} */}
+                )}
               </th>
               <th
                 className="px-4 py-2 cursor-pointer"
